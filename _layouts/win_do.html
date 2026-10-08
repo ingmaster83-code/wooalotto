@@ -1,0 +1,41 @@
+---
+layout: default
+---
+
+<div class="page-with-sidebar">
+<div class="region-page">
+
+  <nav class="breadcrumb" aria-label="위치">
+    <a href="/">홈</a>
+    <span>›</span>
+    <a href="/win/">1등 당첨 판매점</a>
+    <span>›</span>
+    <span>{{ page.doShort }}</span>
+  </nav>
+
+  <div class="region-page-header">
+    <h1>🏆 {{ page.doShort }} 로또 1등 당첨 판매점</h1>
+    <p>최근 1년 자동 1등 · 판매점 {{ page.totalStores }}곳 · 당첨 {{ page.totalWins }}건 · 시군구를 선택하세요</p>
+  </div>
+
+  <div class="ad-slot">
+    {% include ad.html %}
+  </div>
+
+  <div class="region-grid">
+    {% for sg in page.sgRows %}
+    <a href="/win/{{ page.doShort | uri_escape }}/{{ sg.slug | uri_escape }}/" class="region-btn">
+      <span class="region-icon">🏆</span>{{ sg.name }} <span style="color:#9CA3AF;font-size:.82rem;">({{ sg.count }}곳 · {{ sg.sum }}건)</span>
+    </a>
+    {% endfor %}
+  </div>
+
+  <div class="tip-box">
+    <h2>{{ page.doShort }} 1등 당첨 판매점 안내</h2>
+    <p>1176~1227회차(2025.6.8~2026.6.6) 로또6/45 1등 자동 당첨이 나온 판매점을 시군구별로 정리했습니다. 수동 선택 당첨은 공공데이터에 없습니다.</p>
+    <p style="margin-top:8px;"><a href="/region/{{ page.doShort | uri_escape }}/">{{ page.doShort }} 전체 복권 판매점 →</a></p>
+  </div>
+
+</div>
+<aside class="tool-sidebar"></aside>
+</div>

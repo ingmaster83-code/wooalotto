@@ -1,0 +1,101 @@
+---
+layout: default
+---
+
+<div class="page-with-sidebar">
+<div class="camp-page">
+
+  <nav class="breadcrumb" aria-label="위치">
+    <a href="/">홈</a>
+    <span>›</span>
+    <a href="/region/{{ page.doShort | uri_escape }}/">{{ page.doShort }}</a>
+    <span>›</span>
+    <a href="/region/{{ page.doShort | uri_escape }}/{{ page.sgSlug | uri_escape }}/">{{ page.sigungu }}</a>
+    <span>›</span>
+    <a href="/region/{{ page.doShort | uri_escape }}/{{ page.sgSlug | uri_escape }}/{{ page.dong | uri_escape }}/">{{ page.dongLabel }}</a>
+  </nav>
+
+  <div class="camp-header">
+    <div class="camp-tags">
+      <span class="tag tag-type">📍 {{ page.doShort }} {{ page.sigungu }} {{ page.dongLabel }}</span>
+      <span class="tag tag-safe">🍀 {{ page.kindShort }}</span>
+      {% if page.winCount > 0 %}<span class="tag tag-safe">🏆 1등 자동 {{ page.winCount }}회</span>{% endif %}
+    </div>
+    <h1 class="camp-title">{{ page.storeName }}</h1>
+    <div class="camp-info-row"><span class="camp-info-icon">📍</span><span>{{ page.addr }}</span></div>
+    <div class="camp-info-row"><span class="camp-info-icon">🎟️</span><span>{{ page.kindText }} 판매점</span></div>
+  </div>
+
+  <p class="summary-p" style="margin-top:14px;">{{ page.summary }}</p>
+
+  <div>
+    <a class="map-btn" href="https://map.kakao.com/?q={{ page.addr | uri_escape }}">🗺️ 카카오맵에서 위치 확인</a>
+    <a class="map-btn" href="https://map.naver.com/p/search/{{ page.addr | uri_escape }}">🗺️ 네이버지도로 보기</a>
+    <button type="button" class="near-btn" data-near-me>📍 내 주변 복권방 찾기</button>
+  </div>
+
+  <div class="ad-slot">
+    {% include ad.html %}
+  </div>
+
+  <div class="camp-section trust-box">
+    <h2>📋 판매점 등록 정보 (공공데이터)</h2>
+    <ul class="ctx" style="padding-left:20px;">
+      <li><strong>판매점명</strong> {{ page.storeName }}</li>
+      <li><strong>도로명주소</strong> {{ page.addr }}</li>
+      {% if page.lot != "" %}<li><strong>지번주소</strong> {{ page.lot }}</li>{% endif %}
+      <li><strong>취급 복권</strong> {{ page.kindText }}</li>
+      {% if page.winCount > 0 %}<li><strong>최근 1년 1등 자동 당첨</strong> {{ page.winCount }}회 (1176~1227회차)</li>{% endif %}
+    </ul>
+    <p class="kv-note">기획예산처 복권판매점 목록(2026-08-20 기준) 기반이며, 영업시간·전화번호는 제공되지 않습니다. 1등 당첨 이력은 자동 선택만 포함되고 판매점은 시군구까지만 공개되어 동일 상호는 점포를 특정할 수 없습니다.</p>
+  </div>
+
+  {% if page.winPossible > 0 and page.winCount == 0 %}
+  <div class="warn-box">
+    ℹ️ 같은 상호({{ page.storeName }})의 판매점이 {{ page.sigungu }}에 {{ page.winSame }}곳 있고, 그중 한 곳에서 최근 1년 1등 자동 당첨이 나왔습니다. 공공데이터로는 어느 점포인지 구분되지 않아 이 판매점의 당첨 여부는 확인할 수 없습니다.
+  </div>
+  {% endif %}
+
+  {% if page.near.size > 0 %}
+  <div class="camp-section">
+    <h2>📍 가까운 복권 판매점</h2>
+    <ul class="office-list">
+      {% for n in page.near %}<li><a href="/store/{{ n.slug }}/"><b>{{ n.name }}{% if n.win > 0 %}<span class="shop-meta">🏆 {{ n.win }}회</span>{% endif %}</b><small>{{ n.dist }} · {{ n.dong }}</small></a></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <div class="ad-slot">
+    {% include ad.html %}
+  </div>
+
+  {% if page.ring.size > 0 %}
+  <div class="region-camps">
+    <h2>{{ page.dongLabel }} 다른 복권 판매점</h2>
+    <ul class="office-list">
+      {% for n in page.ring %}<li><a href="/store/{{ n.slug }}/"><b>{{ n.name }}{% if n.win > 0 %}<span class="shop-meta">🏆 {{ n.win }}회</span>{% endif %}</b></a></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <div class="camp-section">
+    <h2>🔎 더 찾아보기</h2>
+    <div class="chip-row">
+      <a class="chip" href="/region/{{ page.doShort | uri_escape }}/{{ page.sgSlug | uri_escape }}/{{ page.dong | uri_escape }}/">{{ page.dongLabel }} 로또 판매점</a>
+      <a class="chip" href="/region/{{ page.doShort | uri_escape }}/{{ page.sgSlug | uri_escape }}/">{{ page.sgLabel }} 복권방</a>
+      <a class="chip" href="/win/{{ page.doShort | uri_escape }}/">{{ page.doShort }} 1등 당첨 판매점</a>
+      <a class="chip" href="/win/">전국 로또 1등 당첨 판매점</a>
+      {% for n in page.nearDongs %}<a class="chip" href="/region/{{ n.do | uri_escape }}/{{ n.sgSlug | uri_escape }}/{{ n.dong | uri_escape }}/">{{ n.dong }} 로또</a>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% include faq.html %}
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Store","name":{{ page.storeName | jsonify }},"address":{"@type":"PostalAddress","streetAddress":{{ page.addr | jsonify }},"addressRegion":{{ page.doShort | jsonify }},"addressLocality":{{ page.sigungu | jsonify }},"addressCountry":"KR"}{% if page.lat %},"geo":{"@type":"GeoCoordinates","latitude":{{ page.lat }},"longitude":{{ page.lng }}}{% endif %}}</script>
+
+</div>
+<aside class="tool-sidebar"></aside>
+</div>

@@ -1,0 +1,55 @@
+---
+layout: default
+title: 복권 판매점 검색 - 동네·판매점 이름으로 찾기
+description: 동네 이름(역삼동 로또)이나 판매점 이름으로 전국 로또·복권 판매점을 검색하세요.
+---
+
+<div class="section">
+  <nav class="breadcrumb"><a href="/">홈</a> <span>›</span> <span>검색</span></nav>
+  <h1 style="font-size:1.6rem;font-weight:800;margin:20px 0 24px;">🔍 복권 판매점 검색</h1>
+
+  <div class="search-wrap" style="max-width:100%;margin-bottom:24px;">
+    <input type="text" id="searchInput" class="search-input"
+           placeholder="예) 역삼동 로또, 부평 복권방, 판매점 이름..."
+           autocomplete="off" style="border:1px solid #E5E7EB;">
+    <button class="search-btn" onclick="doSearch()">검색</button>
+  </div>
+
+  <p id="searchStatus" style="color:#6B7280;font-size:.87rem;margin-bottom:16px;">검색어를 입력하세요. 여러 단어는 공백으로 구분합니다.</p>
+  <div class="chip-row" id="dongList"></div>
+  <ul class="office-list" id="resultList"></ul>
+</div>
+
+<script>
+let stores = null, dongs = null;
+const WORDS = ['로또','복권','복권방','판매점','명당','당첨','1등','파는곳','파는','곳','연금복권','스피또','로또판매점','복권판매점'];
+
+(async () => {
+  document.getElementById('searchStatus').textContent = '검색 인덱스를 불러오는 중...';
+  const [a, b] = await Promise.all([fetch('/search_index.json').then(r => r.json()), fetch('/assets/dongs.json').then(r => r.json())]);
+  a.forEach(f => { f.h = (f.n + ' ' + f.do + ' ' + f.sg + ' ' + f.dg).toLowerCase(); });
+  b.forEach(f => { f.h = (f.d + ' ' + f.s + ' ' + f.n).toLowerCase(); });
+  stores = a; dongs = b;
+  document.getElementById('searchStatus').textContent = `총 ${stores.length.toLocaleString()}곳 · ${dongs.length.toLocaleString()}개 동네 검색 가능`;
+  const q = new URLSearchParams(location.search).get('q');
+  if (q) { document.getElementById('searchInput').value = q; doSearch(); }
+})();
+
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+function doSearch() {
+  const q = document.getElementById('searchInput').value.trim();
+  if (!q || !stores) return;
+  const toks = q.toLowerCase().split(/\s+/).filter(Boolean);
+  const placeToks = toks.filter(t => !WORDS.includes(t));
+  const dres = [];
+  if (placeToks.length) { for (const d of dongs) { if (placeToks.every(t => d.h.includes(t))) { dres.push(d); if (dres.length >= 24) break; } } }
+  const sres = [];
+  if (placeToks.length) { for (const f of stores) { if (placeToks.every(t => f.h.includes(t))) { sres.push(f); if (sres.length >= 100) break; } } }
+  document.getElementById('searchStatus').textContent = `"${q}" 검색 결과: 동네 ${dres.length}곳, 판매점 ${sres.length}${sres.length >= 100 ? '+' : ''}곳`;
+  document.getElementById('dongList').innerHTML = dres.map(d => `<a class="chip" href="/region/${encodeURIComponent(d.d)}/${encodeURIComponent(d.g)}/${encodeURIComponent(d.n)}/">${esc(d.s)} ${esc(d.n)} 로또 판매점</a>`).join('');
+  const list = document.getElementById('resultList');
+  list.innerHTML = sres.map(f => `<li><a href="/store/${f.s}/"><b>${esc(f.n)}${f.w > 0 ? ' 🏆' + f.w : ''}</b><small>${esc(f.do)} ${esc(f.sg)} ${f.dg === '기타' ? '' : esc(f.dg)}</small></a></li>`).join('');
+}
+document.getElementById('searchInput').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+</script>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% if page.url == '/' %}{{ page.title }}{% elsif page.title %}{{ page.title }} | 우아복권{% else %}우아복권 - 우리 동네 로또 판매점·복권방 찾기{% endif %}</title>
+  <meta name="description" content="{% if page.description %}{{ page.description | escape }}{% else %}{{ site.description | strip_newlines | escape }}{% endif %}">
+  <link rel="canonical" href="{{ page.url | absolute_url }}">
+
+  {% if page.layout == 'store' %}
+  <meta property="og:type" content="article">
+  {% else %}
+  <meta property="og:type" content="website">
+  {% endif %}
+  <meta property="og:title" content="{% if page.url == '/' %}{{ page.title | escape }}{% elsif page.title %}{{ page.title | escape }} | 우아복권{% else %}우아복권 - 우리 동네 로또 판매점·복권방 찾기{% endif %}">
+  <meta property="og:description" content="{% if page.description %}{{ page.description | escape }}{% else %}{{ site.description | strip_newlines | escape }}{% endif %}">
+  <meta property="og:image" content="{{ '/assets/og-image.png' | absolute_url }}">
+  <meta property="og:url" content="{{ page.url | absolute_url }}">
+  <meta property="og:site_name" content="우아복권">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9ZGENFSXWC"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-9ZGENFSXWC');</script>
+
+  <!-- AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6464921081676309" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="{{ '/' | relative_url }}" class="site-logo">
+      <span class="logo-icon">🍀</span>
+      <span class="logo-text">우아복권</span>
+    </a>
+    <nav class="header-nav">
+      <a href="{{ '/win/' | relative_url }}">1등 당첨점</a>
+      <a href="{{ '/region/' | relative_url }}">지역별</a>
+      <a href="{{ '/search/' | relative_url }}">검색</a>
+      <a href="https://wooahouse.com">WooaHouse →</a>
+    </nav>
+  </div>
+</header>
+
+<script src="{{ '/assets/js/wooa-sites-bar.js' | relative_url }}"></script>
+<script src="{{ '/assets/js/ad-dev-placeholder.js' | relative_url }}"></script>
+
+{% unless page.layout == 'store' or page.layout == 'dong' or page.layout == 'sigungu' or page.layout == 'do' or page.layout == 'win_index' or page.layout == 'win_do' or page.layout == 'win_sg' or page.url == '/' %}
+<div class="top-ad-bar">
+  {% include ad.html %}
+</div>
+{% endunless %}
+
+<main class="site-main">
+  {{ content }}
+</main>
+<script src="{{ '/assets/js/wooa-sidebar.js' | relative_url }}"></script>
+<script src="{{ '/assets/js/near-me.js' | relative_url }}"></script>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-disclaimer">
+      본 정보는 기획예산처가 공공데이터포털에 공개한 복권판매점 목록(2026년 8월 20일 기준)과 온라인복권 1등 당첨 판매점 현황(1176~1227회차, 2025년 6월~2026년 6월)을 정리한 것입니다.
+      1등 당첨 정보는 자동 선택 1등만 포함하며 판매점 주소 없이 시군구까지만 공개되어, 같은 상호의 판매점이 여러 곳이면 점포를 특정할 수 없습니다. 폐업·이전 등으로 실제와 다를 수 있으니 방문 전에 확인하세요.<br>
+      로또 당첨 확률은 판매점과 무관하며 당첨 이력은 참고용입니다. 복권은 과몰입에 주의하세요. 도박 문제 상담: 한국도박문제예방치유원 ☎1336.
+    </p>
+    <p class="footer-links">
+      <a href="https://wooahouse.com">WooaHouse</a> ·
+      <a href="https://wooaleisure.wooahouse.com">우아레저</a> ·
+      <a href="https://wooasnack.wooahouse.com">우아간식</a> ·
+      <a href="{{ '/privacy/' | relative_url }}">개인정보처리방침</a>
+    </p>
+    <p class="copyright">&copy; 2026 우아복권 · WooaHouse. All rights reserved.</p>
+  </div>
+</footer>
+
+</body>
+</html>

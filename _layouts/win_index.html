@@ -1,0 +1,52 @@
+---
+layout: default
+---
+
+<div class="page-with-sidebar">
+<div class="region-page">
+
+  <nav class="breadcrumb" aria-label="위치">
+    <a href="/">홈</a>
+    <span>›</span>
+    <span>1등 당첨 판매점</span>
+  </nav>
+
+  <div class="region-page-header">
+    <h1>🏆 로또 1등 당첨 판매점 (최근 1년)</h1>
+    <p>1176~1227회차(2025.6.8~2026.6.6) · 자동 선택 1등 · 판매점 {{ page.totalStores }}곳 · 당첨 {{ page.totalWins }}건</p>
+  </div>
+
+  <div class="info-box">
+    기획예산처가 공공데이터포털에 공개한 온라인복권 1등 당첨 판매점 현황입니다. <strong>자동 선택 1등만</strong> 포함하고, 판매점은 <strong>상호와 시군구까지만</strong> 공개됩니다. 당첨 횟수는 참고용이며 판매점과 당첨 확률은 무관합니다.
+  </div>
+
+  <div class="ad-slot">
+    {% include ad.html %}
+  </div>
+
+  <h2 class="group-title">지역별 1등 당첨 판매점</h2>
+  <div class="region-grid">
+    {% for d in page.doRows %}
+    <a href="/win/{{ d.name | uri_escape }}/" class="region-btn">
+      <span class="region-icon">🏆</span>{{ d.name }} <span style="color:#9CA3AF;font-size:.82rem;">({{ d.count }}곳 · {{ d.sum }}건)</span>
+    </a>
+    {% endfor %}
+  </div>
+
+  <h2 class="group-title">당첨 횟수 상위 판매점</h2>
+  <ul class="office-list">
+    {% for w in page.top %}<li><a href="{% if w.slug %}/store/{{ w.slug }}/{% else %}/win/{{ w.do | uri_escape }}/{{ w.sigungu | replace: ' ', '-' | uri_escape }}/{% endif %}"><b>{{ w.name }}<span class="shop-meta">🏆 {{ w.count }}회</span></b><small>{{ w.region }}{% if w.slugs.size > 1 %} · 동일 상호 {{ w.slugs.size }}곳{% endif %}</small></a></li>
+    {% endfor %}
+  </ul>
+
+  {% include faq.html %}
+
+  <div class="tip-box">
+    <h2>로또 명당, 믿어도 될까요?</h2>
+    <p>로또6/45는 매 회차 독립된 추첨이라 어느 판매점에서 사도 1등 확률(약 814만분의 1)은 같습니다. 당첨 횟수가 많은 판매점은 대개 판매량이 많은 곳입니다. 재미로 참고하되 무리한 구매는 피하세요.</p>
+    <p style="margin-top:8px;"><a href="/guide/">로또 판매점 이용 가이드 →</a></p>
+  </div>
+
+</div>
+<aside class="tool-sidebar"></aside>
+</div>

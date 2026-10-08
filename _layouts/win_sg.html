@@ -1,0 +1,52 @@
+---
+layout: default
+---
+
+<div class="page-with-sidebar">
+<div class="region-page">
+
+  <nav class="breadcrumb" aria-label="위치">
+    <a href="/">홈</a>
+    <span>›</span>
+    <a href="/win/">1등 당첨 판매점</a>
+    <span>›</span>
+    <a href="/win/{{ page.doShort | uri_escape }}/">{{ page.doShort }}</a>
+    <span>›</span>
+    <span>{{ page.sigungu }}</span>
+  </nav>
+
+  <div class="region-page-header">
+    <h1>🏆 {{ page.sgLabel }} 로또 1등 당첨 판매점</h1>
+    <p>최근 1년(1176~1227회차) 자동 1등 · 판매점 {{ page.totalStores }}곳 · 당첨 {{ page.totalWins }}건</p>
+  </div>
+
+  <div class="ad-slot">
+    {% include ad.html %}
+  </div>
+
+  {% for w in page.rows %}
+  <div class="camp-section">
+    <h2>{{ w.name }} <span class="shop-meta">🏆 1등 자동 {{ w.count }}회</span></h2>
+    <p class="ctx">{{ w.region }}{% if w.candN > 1 %} · 같은 상호의 판매점이 {{ w.candN }}곳 있어 점포를 특정할 수 없습니다{% elsif w.candN == 0 %} · 판매점 목록에서 같은 상호를 찾지 못했습니다{% endif %}</p>
+    {% if w.single %}
+    <p class="ctx-links"><a href="/store/{{ w.single }}/">{{ w.name }} 판매점 정보 보기 →</a></p>
+    {% elsif w.candidates.size > 0 %}
+    <ul class="office-list">
+      {% for c in w.candidates %}<li><a href="/store/{{ c.slug }}/"><b>{{ w.name }}</b><small>{{ c.addr }}</small></a></li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+  {% endfor %}
+
+  {% include faq.html %}
+
+  <div class="tip-box">
+    <h2>{{ page.sigungu }} 1등 당첨 판매점 안내</h2>
+    <p>기획예산처 공공데이터(1176~1227회차) 기준이며 자동 선택 1등만 포함합니다. 당첨 이력은 참고용이고 판매점과 당첨 확률은 무관합니다.</p>
+    <p style="margin-top:8px;">{% if page.regionSlug %}<a href="/region/{{ page.doShort | uri_escape }}/{{ page.regionSlug | uri_escape }}/">{{ page.sgLabel }} 전체 복권 판매점 →</a> · {% endif %}<a href="/win/{{ page.doShort | uri_escape }}/">{{ page.doShort }} 1등 당첨 판매점 →</a></p>
+  </div>
+
+</div>
+<aside class="tool-sidebar"></aside>
+</div>

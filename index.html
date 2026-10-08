@@ -1,0 +1,116 @@
+---
+layout: default
+title: 우아복권 - 우리 동네 로또 판매점·복권방 찾기 (1등 당첨점 포함)
+description: 동네 이름으로 로또 판매점과 복권방을 찾아보세요. 전국 복권 판매점 2만여 곳의 주소와 최근 1년 로또 1등 자동 당첨 판매점 정보를 공공데이터로 안내합니다.
+---
+
+<div class="hero">
+  <h1>우아복권 · 🍀 우리 동네 로또 파는 곳 어디일까?</h1>
+  <p>동네 이름을 입력하세요 (예: 역삼동 로또, 해운대 복권방, 상계동 로또 판매점)</p>
+  <div class="search-wrap">
+    <input type="text" id="searchInput" class="search-input"
+           placeholder="예) 역삼동 로또, 부평 복권방..."
+           autocomplete="off" aria-label="복권 판매점 검색">
+    <button class="search-btn" onclick="doSearch()">🔍 검색</button>
+  </div>
+  <div style="margin-top:14px;"><button type="button" class="near-btn" data-near-me>📍 내 주변 복권방 찾기</button> <a class="map-btn" href="/win/">🏆 1등 당첨 판매점</a></div>
+</div>
+
+<div class="page-with-sidebar">
+<div>
+<div id="search-results"></div>
+
+<div class="top-ad-bar">
+  {% include ad.html %}
+</div>
+
+<div class="section" style="padding-bottom:0;">
+  <div class="info-box">
+    💡 기획예산처 공공데이터의 복권 판매점 <strong>{{ site.data.lotto_stats.total_fmt }}곳</strong>을 <strong>{{ site.data.lotto_stats.dong_fmt }}개 동네</strong>별로 정리했습니다.
+    최근 1년(1176~1227회차) 로또6/45 <strong>1등 자동 당첨 판매점 {{ site.data.lotto_stats.win_stores }}곳</strong>도 시군구별로 볼 수 있습니다.
+  </div>
+</div>
+
+<div class="section">
+  <h2 class="section-title">🏆 로또 1등 당첨 판매점 (최근 1년)</h2>
+  <p style="color:#6B7280;font-size:.9rem;margin-bottom:12px;">자동 선택 1등 기준 · 시군구별 당첨 판매점과 당첨 횟수를 확인하세요.</p>
+  <a href="/win/" class="reserve-btn secondary" style="display:inline-block;">전국 1등 당첨 판매점 보기 →</a>
+</div>
+
+<div class="section">
+  <h2 class="section-title">📍 지역별로 찾기</h2>
+  <div class="region-grid">
+    {% for d in site.data.lotto_stats.do_counts %}<a href="/region/{{ d.name }}/" class="region-btn"><span class="region-icon">📍</span>{{ d.name }} <span style="color:#9CA3AF;font-size:.82rem;">({{ d.count }})</span></a>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="section">
+  <h2 class="section-title">🔥 복권 판매점이 많은 동네</h2>
+  <div class="chip-row">
+    {% for d in site.data.lotto_stats.top_dongs %}<a class="chip" href="{{ d.url }}">{{ d.label }}<em>{{ d.count }}</em></a>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="section">
+  <h2 class="section-title">✅ 복권 살 때 알아두세요</h2>
+  <ul style="color:#374151;line-height:1.9;font-size:.93rem;padding-left:22px;">
+    <li>로또6/45 1등 확률은 판매점과 무관하게 매 회차 약 <strong>814만분의 1</strong>로 같습니다.</li>
+    <li>당첨 횟수가 많은 판매점은 대개 <strong>판매량이 많은 곳</strong>입니다. 참고용으로만 보세요.</li>
+    <li>폐업·이전 반영에 시차가 있으니 방문 전에 확인하세요. 복권은 과몰입에 주의하세요 (☎1336).</li>
+  </ul>
+  <p style="margin-top:12px;"><a href="/guide/">복권 판매점 이용 가이드 →</a></p>
+</div>
+
+</div>
+<aside class="tool-sidebar"></aside>
+</div>
+
+<script>
+let stores = null, dongs = null;
+const WORDS = ['로또','복권','복권방','판매점','명당','당첨','1등','파는곳','파는','곳','연금복권','스피또','로또판매점','복권판매점'];
+
+async function loadAll() {
+  if (stores) return;
+  const [a, b] = await Promise.all([fetch('/search_index.json').then(r => r.json()), fetch('/assets/dongs.json').then(r => r.json())]);
+  a.forEach(f => { f.h = (f.n + ' ' + f.do + ' ' + f.sg + ' ' + f.dg).toLowerCase(); });
+  b.forEach(f => { f.h = (f.d + ' ' + f.s + ' ' + f.n).toLowerCase(); });
+  stores = a; dongs = b;
+}
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+function doSearch() {
+  const q = document.getElementById('searchInput').value.trim();
+  const el = document.getElementById('search-results');
+  if (!q) { el.innerHTML = ''; return; }
+  el.innerHTML = '<p style="text-align:center;padding:20px;color:#6B7280;">검색 중...</p>';
+  loadAll().then(() => {
+    const toks = q.toLowerCase().split(/\s+/).filter(Boolean);
+    const placeToks = toks.filter(t => !WORDS.includes(t));
+    const dres = [];
+    if (placeToks.length) { for (const d of dongs) { if (placeToks.every(t => d.h.includes(t))) { dres.push(d); if (dres.length >= 16) break; } } }
+    const sres = [];
+    const nameToks = placeToks;
+    if (nameToks.length) { for (const f of stores) { if (nameToks.every(t => f.h.includes(t))) { sres.push(f); if (sres.length >= 30) break; } } }
+    if (!dres.length && !sres.length) {
+      el.innerHTML = '<p style="text-align:center;padding:20px;color:#6B7280;">검색 결과가 없습니다. 동네 이름(예: 역삼동)으로 다시 검색해 보세요.</p>';
+      return;
+    }
+    let html = '<div style="max-width:960px;margin:0 auto;padding:0 20px;">';
+    if (dres.length) {
+      html += '<p style="padding:8px 0;font-size:.9rem;color:#6B7280;">동네 검색 결과</p><div class="chip-row">' +
+        dres.map(d => `<a class="chip" href="/region/${encodeURIComponent(d.d)}/${encodeURIComponent(d.g)}/${encodeURIComponent(d.n)}/">${esc(d.s)} ${esc(d.n)} 로또 판매점</a>`).join('') + '</div>';
+    }
+    if (sres.length) {
+      html += '<p style="padding:14px 0 8px;font-size:.9rem;color:#6B7280;">판매점 검색 결과</p><ul class="office-list">' +
+        sres.map(f => `<li><a href="/store/${f.s}/"><b>${esc(f.n)}${f.w > 0 ? ' 🏆' + f.w : ''}</b><small>${esc(f.do)} ${esc(f.sg)} ${f.dg === '기타' ? '' : esc(f.dg)}</small></a></li>`).join('') + '</ul>';
+    }
+    el.innerHTML = html + '</div>';
+    el.scrollIntoView({ behavior: 'smooth' });
+  });
+}
+document.getElementById('searchInput').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+const urlQ = new URLSearchParams(location.search).get('q');
+if (urlQ) { document.getElementById('searchInput').value = urlQ; doSearch(); }
+</script>
