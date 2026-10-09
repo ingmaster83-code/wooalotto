@@ -60,7 +60,7 @@ layout: default
   <div class="tip-box">
     <h2>{{ page.dongLabel }} 복권방 이용 안내</h2>
     <p>위 목록은 공공데이터에 등록된 판매점입니다. 폐업·이전이 반영되기까지 시차가 있으니 방문 전에 확인하세요. 로또 당첨 확률은 판매점과 무관하며 당첨 이력은 참고용입니다.</p>
-    <p style="margin-top:8px;"><a href="/region/{{ page.doShort | uri_escape }}/{{ page.sgSlug | uri_escape }}/">{{ page.sgLabel }} 동네별 복권방 →</a> · <a href="/win/">전국 1등 당첨 판매점 →</a></p>
+    <p style="margin-top:8px;"><a href="/region/{{ page.doShort | uri_escape }}/{{ page.sgSlug | uri_escape }}/">{{ page.sgLabel }} 동네별 복권방 →</a> · <a href="/win/">전국 1등 당첨 판매점 →</a> · {% if page.dong != "기타" %}<a href="https://wooatown.wooahouse.com/동네/{{ page.doShort | uri_escape }}/{{ page.sgSlug | uri_escape }}/{{ page.dong | uri_escape }}/">🏘️ {{ page.dongLabel }} 전체 생활정보 (우아동네) →</a>{% endif %}</p>
   </div>
 
 </div>
